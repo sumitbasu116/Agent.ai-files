@@ -184,4 +184,51 @@ Take your existing code and think of the flow as:
        Final answer
            ↓
           break
-The important part is that the LLM gets another chance to `make a decision` after `every tool result`.
+The important part is that the LLM gets another chance to `make a decision` after `every tool result`.<br>
+Now, check the `agent_loop.py` program and understand the step by step.
+<br> The crucial line is:
+<br> `while True:`
+Because, after calculating multiply 200,5, <br> The program doesn't say:
+> I'm done.
+
+It says:<br> 
+> Let's ask the LLM what I should do next.
+
+That's the core idea behind the Agent Loop.<br>
+We also used:
+> for tool_call in message.tool_calls:
+
+rather than:<br>
+> message.tool_calls[0]
+
+because an LLM can potentially request multiple tools in one response.<br>
+Let's understand: `messages.append(message)`
+#### What is message?
+Earlier we did:
+```
+response = client.chat.completions.create(
+    model="openai/gpt-oss-20b",
+    messages=messages,
+    tools=tools,
+    tool_choice="auto"
+)
+message = response.choices[0].message
+```
+Suppose the user asks:
+```
+Multiply 25 and 26
+```
+The LLM may return something like:
+```
+message:
+    role = assistant
+    content = None
+    tool_calls =
+        calculator(
+            a = 25,
+            b = 26,
+            operation = "multiply"
+        )
+```
+So `message` represents the LLM's latest response.
+
