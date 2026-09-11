@@ -413,7 +413,7 @@ Final answer: - **Multiplication (20 × 10)**: 200
 
 I don’t have any information about your name. If you’d like me to remember it, just let me know!
 ```
-Important Example:
+**Important Example:**
 ```
 Ask me anything:multiply 20,10 then add 10,30 then modulas them
 
@@ -442,6 +442,54 @@ Final answer: Here’s the step‑by‑step calculation:
 
 So, the result of “multiplying 20 and 10, adding 10 and 30, then taking the modulo of the two results” is **0**.
 ```
+current behavior:
+```
+LLM
+ ↓
+"Since I know how to calculate everything,
+I'll just answer the whole question."
+ ↓
+Final answer
+```
+is allowed by `tool_choice="auto"`.<br>
+`auto` means:<br>
+> Use a tool when you think it is appropriate.
+
+It does not mean:<br>
+> Use the calculator whenever a calculation appears.
+
+So the LLM is currently deciding that it can answer the entire calculation itself.
+## Part 5
+**what is the issue in `Part 4`?**
+we haven't explicitly instructed the LLM:
+> Prefer using the calculator whenever the operation is supported by the calculator.
+
+So the model has too much freedom.<br>
+We can improve this with the tool description.<br>
+Instead of:
+```
+"description": "Performs basic mathematical calculations."
+```
+we can say:
+```
+"description": """
+Performs mathematical calculations.
+
+Use this tool whenever the user asks you to perform
+an operation supported by this calculator.
+
+Supported operations:
+add, subtract, multiply, divide, power.
+
+Do not use this tool for unsupported operations.
+"""
+```
+Now we're giving the LLM a clearer policy.
+
+```
+agent_loop_v2.py
+```
+
 
 
 
