@@ -261,7 +261,7 @@ That's why we do:<br>
 ```
 messages.append(message)
 ```
-### Why do we need to add it?
+#### Why do we need to add it?
 Because the next LLM call needs to know what happened previously.<br>
 We want our conversation history to become:
 ```
@@ -378,6 +378,43 @@ The `tool_call_id` tells the LLM:
 > This result belongs to the tool call with ID abc123.
 
 **It's basically a `correlation` ID.**
+#### What happens after the below code? How LLM finally printing the result as we never added a request statement to LLM after that?
+```
+messages.append(
+    {
+        "role": "tool",
+        "tool_call_id": tool_call.id,
+        "content": str(result)
+    }
+)
+```
+This is a loop, not a single request.<br>
+Then the loop continues automatically:
+```
+while True:
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+```
+So the model is called again with the updated conversation, including:<br>
+-> the original user message<br>
+-> the assistant message that requested the tool<br>
+-> the tool result message<br>
+At that next model call, the LLM sees the tool output and decides:<br>
+-> either call another tool,<br>
+**or**<br>
+-> produce a normal final answer
+Then this line triggers:
+```
+if not message.tool_calls:
+    print("\nFinal answer:", message.content)
+    break
+```
+So the final answer is printed by the LLM in the next iteration of the loop, not in the same tool-call block.
+
 ### Results
 Example 1:
 ```
@@ -489,6 +526,25 @@ Now we're giving the LLM a clearer policy.
 ```
 agent_loop_v2.py
 ```
+We now have:
+```
+                    ┌───────────────┐
+                    │      LLM      │
+                    └───────┬───────┘
+                            │
+                     What next?
+                            │
+              ┌─────────────┴─────────────┐
+              ↓                           ↓
+       Tool available?              No suitable tool
+              ↓                           ↓
+        Execute tool                LLM handles it
+              ↓                           ↓
+         Tool result                Continue/final
+              │
+              └──────────→ LLM
+```
+### Results
 
 
 
