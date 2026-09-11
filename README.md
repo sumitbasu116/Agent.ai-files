@@ -261,7 +261,59 @@ That's why we do:<br>
 ```
 messages.append(message)
 ```
+### Why do we need to add it?
+Because the next LLM call needs to know what happened previously.<br>
+We want our conversation history to become:
+```
+User:
+Multiply 25 and 26
 
+Assistant:
+I want to call calculator with:
+a = 25
+b = 26
+operation = multiply
+
+Tool:
+650
+```
+So we do:
+```
+messages.append(message)
+```
+which adds the LLM's tool-call response.<br>
+Then:
+```
+messages.append({
+    "role": "tool",
+    "tool_call_id": tool_call.id,
+    "content": str(result)
+})
+```
+adds the tool result.<br>
+Now `messages` contains:
+```
+┌─────────────────────────────────────┐
+│ User                                │
+│ Multiply 25 and 26                  │
+├─────────────────────────────────────┤
+│ Assistant                           │
+│ Call calculator(25, 26, multiply)   │
+├─────────────────────────────────────┤
+│ Tool                                │
+│ Result = 650                        │
+└─────────────────────────────────────┘
+```
+Then we call the LLM again:
+```
+response = client.chat.completions.create(
+    model="openai/gpt-oss-20b",
+    messages=messages,
+    tools=tools,
+    tool_choice="auto"
+)
+```
+The LLM now sees the complete history.
 
 
 
