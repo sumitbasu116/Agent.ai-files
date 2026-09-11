@@ -230,5 +230,39 @@ message:
             operation = "multiply"
         )
 ```
-So `message` represents the LLM's latest response.
+**So `message` represents the LLM's latest response.**
+#### What is inside messages?
+Remember that `messages` is our conversation history.<br>
+Initially:
+```
+messages = [
+    {
+        "role": "user",
+        "content": "Multiply 25 and 26"
+    }
+]
+```
+So:
+```
+messages
+   |
+   └── User: Multiply 25 and 26
+```
+Then we call the LLM.<br>
+The LLM says:<br>
+> I want to use the calculator.
+That response is stored in:<br>
+```
+message
+```
+But notice:<br>
+**It is not automatically added to messages.** <br>
+That's why we do:<br>
+```
+messages.append(message)
+```
+
+
+
+
 
