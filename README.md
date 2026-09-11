@@ -46,4 +46,14 @@ Result
      ↓
 LLM final answer
 ```
+### Results:
+```
+Ask me a calculation:  multiply 25 and 26
+{'a': 25, 'b': 26, 'operation': 'multiply'}
+Result from python calculate function: 650
+Final answer: The product of 25 and 26 is **650**.
 
+Ask me a calculation: modulas of 2 and 1
+LLM does not have answer from the Python Calculator tool
+```
+## Part 3
