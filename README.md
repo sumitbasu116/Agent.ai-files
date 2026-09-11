@@ -57,3 +57,48 @@ Ask me a calculation: modulas of 2 and 1
 LLM does not have answer from the Python Calculator tool
 ```
 ## Part 3
+```
+agent_v4.py
+```
+Here, the agent becomes more powerful. It can decide whether to call the Calculator tool to perform a mathematical operation, or answer the user's question directly using the LLM's own knowledge.
+For example:
+User: "What is 25 multiplied by 4?"
+→ Agent decides to call the Calculator tool.
+User: "What is Machine Learning?"
+→ Agent decides that no tool is required and answers directly using the LLM.
+```
+                    User
+                      │
+                      ▼
+                    LLM
+                      │
+             tool_choice="auto"
+                      │
+             ┌────────┴────────┐
+             │                 │
+             ▼                 ▼
+       Tool required?       No tool
+             │                 │
+            YES                NO
+             │                 │
+             ▼                 ▼
+       calculator()       Answer directly
+             │                 │
+             ▼                 │
+          result                │
+             │                 │
+             └────────┬─────────┘
+                      ▼
+                    User
+```
+### Results
+```
+Ask me a calculation: divide 3 by 3
+{'a': 3, 'b': 3, 'operation': 'divide'}
+Result from python calculate function: 1.0
+Final answer: 3 divided by 3 equals **1**.
+
+Ask me a calculation: Hello! who are you?
+LLM answer: Hi there! I’m ChatGPT, an AI language model created by OpenAI.
+```
+> The only difference b/n agent v3 and agent v4 is that Agent v4 can answer the operations or question which is not in the tool or python calculator function.
