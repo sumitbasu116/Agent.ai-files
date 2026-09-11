@@ -545,6 +545,48 @@ We now have:
               └──────────→ LLM
 ```
 ### Results
+Example 1:
+```
+Ask me anything:multiply 20,10 then add 10,30 then modulas them
+
+LLM requested tool: calculator
+Arguments: {'a': 20, 'b': 10, 'operation': 'multiply'}
+Tool result: 200
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 30, 'operation': 'add'}
+Tool result: 40
+
+Final answer: The result is **0**.
+```
+**Important Example 2:**
+```
+Ask me anything:tell my name then multiply 20,10 then add 10,30
+
+LLM requested tool: calculator
+Arguments: {'a': 20, 'b': 10, 'operation': 'multiply'}
+Tool result: 200
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 30, 'operation': 'add'}
+Tool result: 40
+
+Final answer: I’m sorry, but I don’t know your name.
+
+**Calculations**  
+- 20 × 10 = **200**  
+- 10 + 30 = **40**
+```
+**If we look at `Important Example 2` , we have asked `tell my name` first. According to our below code, it should stop executing further calculation**
+```
+if not message.tool_calls:
+        print("\nFinal answer:",message.content)
+        break
+```
+`break` means, it will come out of the `while True` loop and stop the execution.<br>
+Instead, LLM does something intelligent here and reorder the operations or tasks.
+
+
 
 
 
