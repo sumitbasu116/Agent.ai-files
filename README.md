@@ -166,10 +166,8 @@ A more useful mental model is: **Interview Question**
 
 Take your existing code and think of the flow as:
 >
-while True:
-
+    while True:
     Ask LLM: "What should I do?"
-
     ├── Tool call?
     │      ↓ YES
     │   Execute calculator
@@ -183,4 +181,4 @@ while True:
        Final answer
            ↓
           break
-The important part is that the LLM gets another chance to make a decision after every tool result.
+The important part is that the LLM gets another chance to `make a decision` after `every tool result`.
