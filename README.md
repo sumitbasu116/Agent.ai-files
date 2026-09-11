@@ -347,7 +347,101 @@ Then our Python application executes the calculator and sends the result back:
     "content": "650"
 }
 ```
+#### What is tool_call_id?
+This part:
+```
+"tool_call_id": tool_call.id
+```
+Suppose the LLM says:
+```
+Assistant:
+Please call calculator
+ID = abc123
+```
+Your application executes it:
+```
+result = calculator(25, 26, "multiply")
+```
+and gets:
+```
+650
+```
+Then we send:
+```
+{
+    "role": "tool",
+    "tool_call_id": "abc123",
+    "content": "650"
+}
+```
+The `tool_call_id` tells the LLM:
+> This result belongs to the tool call with ID abc123.
 
+**It's basically a `correlation` ID.**
+### Results
+Example 1:
+```
+Ask me anything:multiply 20,10 then add 10,30
+
+LLM requested tool: calculator
+Arguments: {'a': 20, 'b': 10, 'operation': 'multiply'}
+Tool result: 200
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 30, 'operation': 'add'}
+Tool result: 40
+
+Final answer: Here are the results of the calculations you requested:
+
+1. **Multiplication**: \(20 \times 10 = 200\)  
+2. **Addition**: \(10 + 30 = 40\)
+```
+Example 2:
+```
+Ask me anything:multiply 20,10 then add 10,30 and then tell my name
+
+LLM requested tool: calculator
+Arguments: {'a': 20, 'b': 10, 'operation': 'multiply'}
+Tool result: 200
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 30, 'operation': 'add'}
+Tool result: 40
+
+Final answer: - **Multiplication (20 × 10)**: 200  
+- **Addition (10 + 30)**: 40  
+
+I don’t have any information about your name. If you’d like me to remember it, just let me know!
+```
+Important Example:
+```
+Ask me anything:multiply 20,10 then add 10,30 then modulas them
+
+LLM requested tool: calculator
+Arguments: {'a': 20, 'b': 10, 'operation': 'multiply'}
+Tool result: 200
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 30, 'operation': 'add'}
+Tool result: 40
+
+LLM requested tool: calculator
+Arguments: {'a': 200, 'b': 40, 'operation': 'add'}
+Tool result: 240
+
+Final answer: Here’s the step‑by‑step calculation:
+
+1. **Multiply 20 and 10**  
+   \(20 \times 10 = 200\)
+
+2. **Add 10 and 30**  
+   \(10 + 30 = 40\)
+
+3. **Modulo (remainder of 200 ÷ 40)**  
+   \(200 \div 40 = 5\) with a remainder of **0**.
+
+So, the result of “multiplying 20 and 10, adding 10 and 30, then taking the modulo of the two results” is **0**.
+```
 
 
 
