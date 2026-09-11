@@ -102,3 +102,8 @@ Ask me a calculation: Hello! who are you?
 LLM answer: Hi there! I’m ChatGPT, an AI language model created by OpenAI.
 ```
 > The only difference b/n agent v3 and agent v4 is that Agent v4 can answer the operations or question which is not in the tool or python calculator function.
+### important point
+`tool_choice="auto"` does not mean:
+It means:
+> **The LLM is allowed to decide whether to request a tool call.**
+<br>The application still executes the tool.
