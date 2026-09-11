@@ -107,3 +107,80 @@ LLM answer: Hi there! I’m ChatGPT, an AI language model created by OpenAI.
 It means:
 > **The LLM is allowed to decide whether to request a tool call.**
 <br>The application still executes the tool.
+
+## Part 4
+Till **Part 3**, we have only one tool. What if there is a need of multiple tools. E.g. multiply 200,5 then add 3 to it.
+Let's understand few concepts first.
+### Agent vs normal LLM
+#### Normal LLM call:
+```
+User
+ ↓
+LLM
+ ↓
+Answer
+```
+#### LLM with one tool call:
+```
+User
+ ↓
+LLM
+ ↓
+Tool
+ ↓
+LLM
+ ↓
+Answer
+```
+#### Agent:
+```
+User
+ ↓
+LLM
+ ↓
+Decide
+ ↓
+Tool
+ ↓
+Result
+ ↓
+LLM
+ ↓
+Decide
+ ↓
+Tool
+ ↓
+Result
+ ↓
+LLM
+ ↓
+...
+ ↓
+Final answer
+```
+So an Agent is not simply:
+> An LLM with tools.
+
+A more useful mental model is: **Interview Question**
+> An Agent is an LLM-driven decision loop that can repeatedly choose actions/tools, observe their results, and continue until it can produce a final answer.
+
+Take your existing code and think of the flow as:
+>
+while True:
+
+    Ask LLM: "What should I do?"
+
+    ├── Tool call?
+    │      ↓ YES
+    │   Execute calculator
+    │      ↓
+    │   Give result back to LLM
+    │      ↓
+    │   Go back to the top
+    │
+    └── No tool call
+           ↓
+       Final answer
+           ↓
+          break
+The important part is that the LLM gets another chance to make a decision after every tool result.
