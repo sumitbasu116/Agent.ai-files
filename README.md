@@ -314,6 +314,39 @@ response = client.chat.completions.create(
 )
 ```
 The LLM now sees the complete history.
+#### what is Role?
+**`role` tells us who produced the message.**
+You can think of the conversation as having different participants:
+```
+"user"       → the user
+"assistant"   → the LLM
+"tool"       → a tool/application result
+```
+For example:
+```
+# User message
+{
+    "role": "user",
+    "content": "What is 25 * 26?"
+}
+```
+Then the LLM might respond:
+```
+# Assistant message
+{
+    "role": "assistant",
+    "tool_calls": [...]
+}
+```
+Then our Python application executes the calculator and sends the result back:
+```
+# Tool result message
+{
+    "role": "tool",
+    "tool_call_id": "...",
+    "content": "650"
+}
+```
 
 
 
