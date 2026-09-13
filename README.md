@@ -672,10 +672,72 @@ type
 required
 enum
 ```
+## Part 7 Dynamic Tool Call
+Here, we will do dynamic tool calling by python application. Imagine , we have 100s of tools, then we end up writing 100s of if-else conditions for each.<br>
+We can achieve this by using `first-class function` concept in Python.<br>
+The concept is that a function call can be invoked via a variable.<br>
+**Step by step:** <br>
+**First,** let's include `tool_registry` map/dictionary into our program.
+```
+tool_registry = {
+    "calculator": calculator,
+    "get_user_name": get_user_name
+}
+```
+**Second,** include parameter and required details in `get_user_name` function as without this, python will not able to understand about what should be the arguments.
+```
+tools = [
+    {
+       "type": "function",
+       "function": {
+          "name":"get_user_name",
+          "description": "This is the name of the user.",
+          "parameters": {},
+          "required":[]
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "calculator",
+.....................rest of the tool information.....................
+```
+**Third,** create a variable `tool` and get the tool name from `tool_registry` for the `tool_call.function.name`.
+```
+tool=tool_registry.get(tool_call.function.name)
+```
+**Fourth,** now `tool` variable represents the function name `calculator` or `get_user_name`.<br>
+**Similar way,** `tool()` will represents the function `calculator()` or `get_user_name()`.<br>
+We have the function arguments from `tool_call.function.arguments`, which we can literally pass as a parameter for `tool()` like below.
+```
+        if tool is None:
+            result=f"Unknown Tool:{tool_name}"
+        else:
+            # Automatically pass the arguments
+            result=tool(**arguments)
+```
+**Now,** ur code looks truly like a dynamically tool calling agent. Thanks to python.
+Full code in:
+```
+agent_loop_v4.py
+```
+### Results
+Example 1:
+```
+Ask me anything:print my name first, then multiply 1251 and 789, next, print my name again.
 
+LLM requested tool: get_user_name
+Arguments: {}
+Tool result: Sumit
 
+LLM requested tool: calculator
+Arguments: {'a': 1251, 'b': 789, 'operation': 'multiply'}
+Tool result: 987039
 
-
+Final answer: Sumit
+987039
+Sumit
+```
 
 
 
