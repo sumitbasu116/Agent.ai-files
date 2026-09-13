@@ -738,6 +738,31 @@ Final answer: Sumit
 987039
 Sumit
 ```
+Complex Example 2:
+```
+Ask me anything:print my name first, then convert my name into decimal digits as per 26 English alphabet, like A should be 1,B should be 2 etc. Next, multiple that with 123 
+
+LLM requested tool: get_user_name
+Arguments: {}
+Tool result: Sumit
+
+LLM requested tool: calculator
+Arguments: {'a': 82, 'b': 123, 'operation': 'multiply'}
+Tool result: 10086
+
+Final answer: Name: Sumit  
+Numeric value of name (sum of alphabet positions): 82  
+82 multiplied by 123 equals: 10,086
+```
+Here, the Agent is now demonstrating **two different kinds of capability:**
+```
+Capability                  Who performs it?
+------------------------------------------------
+Get user's name             Python tool
+Convert letters → numbers   LLM
+Multiplication              Python tool
+```
+This is a simple example of **dependent steps.**
 
 
 
