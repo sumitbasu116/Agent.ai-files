@@ -738,7 +738,7 @@ Final answer: Sumit
 987039
 Sumit
 ```
-Complex Example 2:
+**Complex Example 2:**
 ```
 Ask me anything:print my name first, then convert my name into decimal digits as per 26 English alphabet, like A should be 1,B should be 2 etc. Next, multiple that with 123 
 
