@@ -672,7 +672,7 @@ type
 required
 enum
 ```
-## Part 7 Dynamic Tool Call
+## Part 7 Dynamic Tool Calling
 Here, we will do dynamic tool calling by python application. Imagine , we have 100s of tools, then we end up writing 100s of if-else conditions for each.<br>
 We can achieve this by using `first-class function` concept in Python.<br>
 The concept is that a function call can be invoked via a variable.<br>
