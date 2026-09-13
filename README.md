@@ -897,6 +897,9 @@ For example, it could decide to calculate:
 1251 × 789 = ...
 ```
 by itself.
+> If you eventually need guaranteed tool usage, the `application code`—not just the prompt—must enforce that policy.
+
+**But don't implement that yet. For your current learning stage, your prompt-based approach is exactly the right experiment.**
 
 
 
