@@ -375,9 +375,10 @@ Then we send:
 }
 ```
 The `tool_call_id` tells the LLM:
-> This result belongs to the tool call with ID abc123.
+> This result belongs to the tool call with ID abc123.<br>
 
-**It's basically a `correlation` ID.**
+**It's basically a `correlation` ID.** <br>
+**This is our first multi-tool Agent example.**
 #### What happens after the below code? How LLM finally printing the result as we never added a request statement to LLM after that?
 ```
 messages.append(
@@ -584,7 +585,100 @@ if not message.tool_calls:
         break
 ```
 `break` means, it will come out of the `while True` loop and stop the execution.<br>
-Instead, LLM does something intelligent here and reorder the operations or tasks.
+Instead, LLM does something intelligent here and reorder the operations or tasks.<br>
+## Part 6
+As of now we don't know whether LLM reorders this or not by doing task planning. However, if we really want that the LLM should follow the ordering then all the tools should be defined. Hence, we have to introduce a new python function to get the user name and include that in the tools.
+```
+agent_loop_v3.py
+```
+### Few important understanding
+```
+LLM
+  ↓
+decides / requests an action
+  ↓
+Your Python program
+  ↓
+executes the function
+  ↓
+result
+  ↓
+LLM
+```
+**Especially understand:** <br>
+LLM does not execute Python functions. <br>
+Your application executes them. <br>
+tool_calls is the LLM's request. <br>
+role="tool" carries the result back. <br>
+tool_call_id connects the result to the request. <br>
+we've already learned most of this.
+**Multiple tool calls in one LLM response**
+You currently have:
+```
+for tool_call in message.tool_calls:
+```
+This is important.<br>
+The LLM can potentially return:
+```
+tool_call 1 → calculator
+tool_call 2 → get_user_name
+tool_call 3 → calculator
+```
+in **one response.**
+```
+LLM response
+    ↓
+tool
+    ↓
+LLM response
+    ↓
+tool
+    ↓
+LLM response
+```
+**Tool selection vs tool execution**<br>
+This distinction is fundamental.<br>
+The LLM makes the decision.<br>
+Python performs the action.<br>
+Think:
+> LLM = brain/decision maker<br>
+Python tools = capabilities/actions
+
+This distinction becomes extremely important later with LangGraph, MCP, APIs, databases, etc.<br>
+**Tool schemas / structured arguments**
+You've already seen:
+```
+{
+  "a": 20,
+  "b": 10,
+  "operation": "multiply"
+}
+```
+For example:
+```
+"operation": {
+    "type": "string",
+    "enum": ["add", "subtract", "multiply", "divide"]
+}
+```
+The schema tells the LLM:
+> This is what this tool expects.
+
+You should understand:
+```
+description
+properties
+type
+required
+enum
+```
+
+
+
+
+
+
+
 
 
 
