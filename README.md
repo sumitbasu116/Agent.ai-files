@@ -672,7 +672,7 @@ type
 required
 enum
 ```
-## Part 7 Dynamic Tool Calling
+## Part 7 : Dynamic Tool Calling
 Here, we will do dynamic tool calling by python application. Imagine , we have 100s of tools, then we end up writing 100s of if-else conditions for each.<br>
 We can achieve this by using `first-class function` concept in Python.<br>
 The concept is that a function call can be invoked via a variable.<br>
@@ -763,6 +763,140 @@ Convert letters → numbers   LLM
 Multiplication              Python tool
 ```
 This is a simple example of **dependent steps.**
+## Part 8 : Teach the Agent to handle tool errors safely.
+What if the `tools` object contains wrong information about a function. The our Agent can crash. How can our agent handle it safely?
+```
+calculator
+{"a": 20}
+```
+would fail because `b` is missing.
+Example 1: where parameter information is missing
+```
+raise self._make_status_error_from_response(err.response) from None
+groq.BadRequestError: Error code: 400 - {'error': {'message': "Tool call validation failed: tool call validation failed: attempted to call tool 'calculator<|channel|>commentary' which was not in request.tools", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '{"name": "calculator<|channel|>commentary", "arguments": {"a":1251,"operation":"multiply"}}'}}
+```
+Example 2: divide by 0
+```
+Ask me anything:divide 12 by 0
+
+Final answer: Error: division by zero is undefined.
+```
+But, our program defines something as below. And we are expection that error message.
+```
+elif operation == "divide":
+        if b == 0:
+            return "Cannot divide by zero"
+        return a / b
+```
+We can achieve this via `Python programming error handling mechanism`.**
+**step 1:** <br>
+We need to do `raise ValueError(message)`,instead of returning a string in our program.<br>
+```
+elif operation == "divide":
+        if b == 0:
+            raise ValueError("Cannot divide by zero")
+        return a / b
+```
+**step 2:** <br>
+We need to do the tool execution call in a `try..except` block and pass the error back to the LLM.
+```
+        if tool is None:
+            result=f"Unknown Tool:{tool_name}"
+        else:
+            try:
+                # Automatically pass the arguments
+                result=tool(**arguments)
+            except Exception as e:
+                result=f"Tool error:{str(e)}"
+```
+**step 3:** we need to change the instruction prompt in the messages.
+```
+messages = [
+    {
+        "role": "system",
+        "content": """
+            You are an AI assistant with access to tools.
+
+            Tool usage rules:
+
+            1. If a user request requires an operation that is supported
+            by an available tool, MUST use that tool.
+
+            2. Do NOT perform an operation yourself when an available tool
+            can perform that operation.
+
+            3. If an operation is NOT supported by any available tool,
+            you may perform that operation yourself.
+
+            4. After receiving a tool result, continue processing the user's
+            request and determine whether another tool is required.
+
+            5. Use tools as many times as necessary to complete the user's request.
+
+            6. Do not invent or modify tool names.
+
+            7. Only provide the final answer when the user's complete request
+            has been handled.
+            """
+    },
+    {
+        "role": "user",
+        "content": user_question
+    }
+]
+```
+### Result:
+Example 1:
+```
+Ask me anything:divide 12 by 0
+
+LLM requested tool: calculator
+Arguments: {'a': 12, 'b': 0, 'operation': 'divide'}
+Tool result: Tool error:Cannot divide by zero
+
+Final answer: Division by zero is undefined—you cannot divide a number by zero in standard arithmetic.
+```
+Complex Example 2:
+```
+Ask me anything:print my name first, then convert my name into decimal digits as per 26 English alphabet, like A should be 1,B should be 2 etc. Next, multiple that with 123.
+
+LLM requested tool: get_user_name
+Arguments: {'{}': {}}
+Tool result: Tool error:get_user_name() got an unexpected keyword argument '{}'
+
+LLM requested tool: get_user_name
+Arguments: {}
+Tool result: Sumit
+
+LLM requested tool: calculator
+Arguments: {'a': 192113920, 'b': 123, 'operation': 'multiply'}
+Tool result: 23630012160
+
+Final answer: Your name: **Sumit**
+
+Converted to digits (A=1, B=2, …, Z=26) and concatenated: **192113920**
+
+Multiplying this number by 123:
+
+**192,113,920 × 123 = 23,630,012,160**
+```
+That's actually a **very good Agent example.** <br>
+
+It demonstrates that an Agent doesn't necessarily use a tool for every single step.<br>
+
+It uses a tool **when the tool is capable of performing that step.** <br>
+#### One more important lesson from this experiment
+Your system prompt is **guidance**, not a hard security mechanism.<br>
+Even if you write:
+```
+MUST use calculator
+```
+the LLM can still make mistakes.<br>
+For example, it could decide to calculate:
+```
+1251 × 789 = ...
+```
+by itself.
 
 
 
