@@ -938,6 +938,55 @@ state = {
 }
 ```
 is basically our beginner-friendly version of that idea.
+**Explicit state gives us one place to manage Agent information**
+Without state:
+```
+messages
+step
+tool_results
+status
+current_task
+retry_count
+...
+```
+These can become scattered throughout the program.<br>
+With state:
+```
+                Agent State
+                    │
+       ┌────────────┼─────────────┐
+       │            │             │
+   messages       step       tool_results
+       │                          │
+    history                  executions
+```
+Everything related to the Agent's execution is grouped together.<br>
+**It becomes especially useful for multi-step workflows**
+Consider:
+```
+Task
+ ↓
+Read CSV
+ ↓
+Clean data
+ ↓
+Calculate statistics
+ ↓
+Generate chart
+ ↓
+Write report
+```
+At any point, the Agent may need to know:
+```
+What have I already done?
+What is the current task?
+What were the results?
+Did something fail?
+Should I retry?
+Is the whole task complete?
+```
+That's **state**.
+
 
 
 
