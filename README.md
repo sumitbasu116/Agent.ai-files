@@ -1093,6 +1093,29 @@ if not message.tool_calls:
 agent_loop_v7.py
 ```
 ### What does "retry" mean for an Agent?
+Suppose the Agent asks a tool:
+```
+calculator(10, 0, divide)
+```
+The tool returns:
+```
+Tool error: Cannot divide by zero
+```
+The Agent now has to decide:
+> What should I do after this failure?
+
+Possible choices:
+```
+Tool error
+   │
+   ├── Retry the same call
+   │
+   ├── Modify the arguments and retry
+   │
+   ├── Try another tool
+   │
+   └── Stop and report the error
+```
 
 
 
