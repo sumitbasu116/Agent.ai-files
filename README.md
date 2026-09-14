@@ -1058,6 +1058,27 @@ Agent State
 └── ...
 ```
 because an Agent is more than an LLM conversation.
+### state transition
+> A state transition means the Agent's state changes because something happened.
+
+So, to capture the state change , we are going to introduce a new field as `status`.<br>
+```
+state = { 
+            "messages": messages, 
+            "step": 0, 
+            "tool_results": [],
+            "status": "running"
+         }
+```
+Update the state when the execution finally going to complete.
+```
+if not message.tool_calls:
+        state["status"] = "completed"
+        print("\nFinal answer:",message.content)
+        break
+```
+
+
 
 
 
