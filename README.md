@@ -948,6 +948,7 @@ state = {
 }
 ```
 is basically our beginner-friendly version of that idea.
+### Code:
 ```
 agent_loop_v6.py
 ```
@@ -1087,6 +1088,11 @@ if not message.tool_calls:
         print("\nFinal answer:",message.content)
         break
 ```
+### Code:
+```
+agent_loop_v7.py
+```
+### What does "retry" mean for an Agent?
 
 
 
