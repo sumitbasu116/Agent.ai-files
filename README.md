@@ -1,5 +1,6 @@
 # Agentic AI flow
 ## Part 1
+### Code:
 ```
 1.hello_ai.py
 2.agent_v1.py
@@ -25,6 +26,7 @@ The LLM should understand the user's request and decide whether it needs to call
           ↓
         USER
 ## Part 2
+### Code:
 ```
 agent_v3.py
 ```
@@ -57,6 +59,7 @@ Ask me a calculation: modulas of 2 and 1
 LLM does not have answer from the Python Calculator tool
 ```
 ## Part 3
+### Code:
 ```
 agent_v4.py
 ```
@@ -109,6 +112,7 @@ It means:
 <br>The application still executes the tool.
 
 ## Part 4
+### Code:
 ```
 agent_loop.py
 ```
@@ -523,7 +527,7 @@ Do not use this tool for unsupported operations.
 """
 ```
 Now we're giving the LLM a clearer policy.
-
+### Code:
 ```
 agent_loop_v2.py
 ```
@@ -588,6 +592,7 @@ if not message.tool_calls:
 Instead, LLM does something intelligent here and reorder the operations or tasks.<br>
 ## Part 6
 As of now we don't know whether LLM reorders this or not by doing task planning. However, if we really want that the LLM should follow the ordering then all the tools should be defined. Hence, we have to introduce a new python function to get the user name and include that in the tools.
+### Code:
 ```
 agent_loop_v3.py
 ```
@@ -717,7 +722,7 @@ We have the function arguments from `tool_call.function.arguments`, which we can
             result=tool(**arguments)
 ```
 **Now,** ur code looks truly like a dynamically tool calling agent. Thanks to python.
-Full code in:
+### Code:
 ```
 agent_loop_v4.py
 ```
@@ -845,6 +850,11 @@ messages = [
     }
 ]
 ```
+### Code:
+```
+agent_loop_v5.py
+```
+
 ### Result:
 Example 1:
 ```
