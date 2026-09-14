@@ -1037,6 +1037,25 @@ step 15
 continue Agent
 ```
 This becomes important for production Agents.
+#### The key takeaway
+Our current Agent:
+```
+messages = state
+```
+is perfectly fine.<br>
+We're moving toward:
+```
+Agent State
+├── messages
+├── step
+├── tool_results
+├── task
+├── status
+├── errors
+└── ...
+```
+because an Agent is more than an LLM conversation.
+
 
 
 
