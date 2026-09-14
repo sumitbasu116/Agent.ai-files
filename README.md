@@ -901,6 +901,47 @@ by itself.
 
 **But don't implement that yet. For your current learning stage, your prompt-based approach is exactly the right experiment.**
 
+## Agent State
+Here, `messages` is working as our Agent `state`. But, for a very complex agent, this is not enough.<br>
+State enables multiple Agent components to share information within an Agent.<br>
+**Think about it like a Java application**
+Imagine:
+```
+class AgentState {
+    List<Message> messages;
+    int step;
+    String status;
+    List<ToolResult> toolResults;
+    String currentTask;
+}
+```
+You wouldn't want to pass 10 unrelated variables around your application:
+```
+messages
+step
+status
+toolResults
+currentTask
+...
+```
+Instead, you group them into one meaningful object:
+```
+AgentState
+```
+Python's dictionary:
+```
+state = {
+    "messages": messages,
+    "step": 0,
+    "tool_results": [],
+    "status": "running"
+}
+```
+is basically our beginner-friendly version of that idea.
+
+
+
+
 
 
 
