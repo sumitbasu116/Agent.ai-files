@@ -986,6 +986,60 @@ Should I retry?
 Is the whole task complete?
 ```
 That's **state**.
+**State also makes debugging much easier**
+Suppose your Agent produces the wrong answer.<br>
+With explicit state you can inspect:
+```
+print(state)
+```
+and see:
+```
+step: 5
+
+status: running
+
+tool_results:
+    read_csv → success
+    calculate_average → success
+    calculate_average → error
+    calculate_average → success
+
+current_task:
+    generate_summary
+```
+You can understand what happened.<br>
+This becomes extremely valuable when an Agent has dozens of steps.
+### Important: State enables persistence
+This is a major future advantage.<br>
+Imagine your Agent stops at:
+```
+STEP 15
+```
+because the application crashes.<br>
+If your state is persisted somewhere, you could potentially resume from that state instead of starting from zero.<br>
+Conceptually:
+```
+Before crash:
+
+state
+ ↓
+step 15
+ ↓
+application crashes
+
+
+After restart:
+
+load state
+ ↓
+step 15
+ ↓
+continue Agent
+```
+This becomes important for production Agents.
+
+
+
 
 
 
