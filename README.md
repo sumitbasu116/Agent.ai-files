@@ -938,6 +938,9 @@ state = {
 }
 ```
 is basically our beginner-friendly version of that idea.
+```
+agent_loop_v6.py
+```
 **Explicit state gives us one place to manage Agent information**
 Without state:
 ```
