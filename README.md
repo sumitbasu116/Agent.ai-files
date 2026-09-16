@@ -1117,9 +1117,79 @@ Tool error
    └── Stop and report the error
 ```
 The important point is:
-## From now on , we will get ahead with the concepts and practical coding.
-follow this for set up related things:
-https://docs.google.com/document/d/1yrX8ATuszNV7BC1NG0Iqc0IjAYRoDvhXNGBdMmzffsI/edit?usp=sharing
+> Retry should be a decision made by the Agent, not simply "call the tool again."
+
+### Two different retry levels
+**Tool-level retry**
+Application or tool itself will manage the retry. E.g. in except block.
+```
+for attempt in range(3):
+    try:
+        result = tool(**arguments)
+        break
+    except TemporaryError:
+        ...
+```
+**Agent-level retry**
+The LLM gets the error and **decides what to do next**.
+```
+        8. If a tool returns an error containing "Temporary",
+           retry the same tool call.
+
+        9. Do not retry a temporary error more than 2 times.
+
+        10. If an error is permanent, such as division by zero,
+            do not retry the same call.
+```
+### Code example:
+```
+agent_loop_v8.py
+```
+### Result
+```
+Ask me anything:divide 10 by 0
+
+===== AGENT STEP 1 =====
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 0, 'operation': 'divide'}
+Tool result: Tool error:name 'calculator_attempts' is not defined
+
+===== AGENT STEP 2 =====
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 0, 'operation': 'divide'}
+Tool result: Tool error:name 'calculator_attempts' is not defined
+
+===== AGENT STEP 3 =====
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 0, 'operation': 'divide'}
+Tool result: Tool error:name 'calculator_attempts' is not defined
+
+===== AGENT STEP 4 =====
+
+LLM requested tool: calculator
+Arguments: {'a': 10, 'b': 0, 'calculator_attempts': 1, 'operation': 'divide'}
+Tool result: Tool error:calculator() got an unexpected keyword argument 'calculator_attempts'
+
+===== AGENT STEP 5 =====
+
+Final answer: Dividing by zero is undefined in standard arithmetic, so the operation cannot produce a numerical result.
+
+===== FINAL STATE =====
+
+Agent steps: 5
+Status: completed
+
+Tool results:
+{'tool': 'calculator', 'arguments': {'a': 10, 'b': 0, 'operation': 'divide'}, 'result': "Tool error:name 'calculator_attempts' is not defined"}
+{'tool': 'calculator', 'arguments': {'a': 10, 'b': 0, 'operation': 'divide'}, 'result': "Tool error:name 'calculator_attempts' is not defined"}
+{'tool': 'calculator', 'arguments': {'a': 10, 'b': 0, 'operation': 'divide'}, 'result': "Tool error:name 'calculator_attempts' is not defined"}
+{'tool': 'calculator', 'arguments': {'a': 10, 'b': 0, 'calculator_attempts': 1, 'operation': 'divide'}, 'result': "Tool error:calculator() got an unexpected keyword argument 'calculator_attempts'"}
+```
+## Planning Agent
+A planning agent first plan the tasks and then execute the tasks step by step. It can also re-plan based on the result from a previous step.
 
 
 
