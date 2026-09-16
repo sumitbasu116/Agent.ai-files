@@ -1189,7 +1189,131 @@ Tool results:
 {'tool': 'calculator', 'arguments': {'a': 10, 'b': 0, 'calculator_attempts': 1, 'operation': 'divide'}, 'result': "Tool error:calculator() got an unexpected keyword argument 'calculator_attempts'"}
 ```
 ## Planning Agent
-A planning agent first plan the tasks and then execute the tasks step by step. It can also re-plan based on the result from a previous step.
+A planning agent first plan the tasks and then execute the tasks step by step. It can also re-plan based on the result from a previous step.<br>
+Until now, your Agent has mostly been **reactive**.
+> `Reactive Agent`: decide the next action as you go.
+> `Planning Agent`: create a plan for the task, then execute the plan.
+
+### Planning Agent Architecture
+```
+                 USER
+                   │
+                   ▼
+              ┌─────────┐
+              │ PLANNER │
+              └────┬────┘
+                   │
+                   ▼
+                 PLAN
+                   │
+                   ▼
+             ┌───────────┐
+             │ EXECUTOR  │
+             └─────┬─────┘
+                   │
+            ┌──────┴──────┐
+            ▼             ▼
+         Tool A         Tool B
+            │             │
+            └──────┬──────┘
+                   ▼
+                Results
+                   │
+                   ▼
+              Final Answer
+```
+### Planning doesn't always mean "create the entire plan once"
+There are two broad approaches:
+#### Plan → Execute
+```
+Create complete plan
+        ↓
+Execute plan
+```
+#### Plan → Execute → Re-plan
+```
+Create plan
+    ↓
+Execute
+    ↓
+Observe result
+    ↓
+Something changed?
+    ↓
+Re-plan
+    ↓
+Continue
+```
+**The Heart is the planner prompt:**
+```
+planner_prompt = f"""
+You are a planning assistant.
+
+Create a simple step-by-step plan for the user's request.
+
+Rules:
+1. Break the request into logical steps.
+2. Do not execute the steps.
+3. Each step should describe one action.
+4. Keep the plan simple and ordered.
+5. Return ONLY a JSON array.
+
+User request:
+{user_question}
+"""
+```
+### Code:
+```
+planning_agent.py
+```
+### Result:
+```
+python3 planning_agent.py
+What do you want me to do? multiply 20 and 10, then add 50
+
+===== GENERATED PLAN =====
+["Multiply 20 by 10.", "Add 50 to the result."]
+```
+## Natural Language Plan VS Structured Plan
+Natural language plan is too vague.
+```
+["Multiply 20 by 10.", "Add 50 to the result."]
+```
+For a human, this is perfectly understandable, But our Python Executor needs more structured information.<br>
+For example, we'd rather have:
+```
+[
+  {
+    "step": 1,
+    "tool": "get_user_name",
+    "arguments": {}
+  },
+  {
+    "step": 2,
+    "tool": "calculator",
+    "arguments": {
+      "a": 25,
+      "b": 4,
+      "operation": "multiply"
+    }
+  },
+  {
+    "step": 3,
+    "tool": "calculator",
+    "arguments": {
+      "a": "<result of step 2>",
+      "b": 100,
+      "operation": "add"
+    }
+  }
+]
+```
+Now the Executor can actually understand:
+> Which tool should I call? What arguments should I pass?
+
+
+
+
 
 
 
