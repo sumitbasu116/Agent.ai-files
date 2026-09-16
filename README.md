@@ -1116,8 +1116,10 @@ Tool error
    │
    └── Stop and report the error
 ```
-
-
+The important point is:
+## From now on , we will get ahead with the concepts and practical coding.
+follow this for set up related things:
+https://docs.google.com/document/d/1yrX8ATuszNV7BC1NG0Iqc0IjAYRoDvhXNGBdMmzffsI/edit?usp=sharing
 
 
 
