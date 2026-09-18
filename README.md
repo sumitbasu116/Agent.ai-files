@@ -1311,6 +1311,107 @@ For example, we'd rather have:
 Now the Executor can actually understand:
 > Which tool should I call? What arguments should I pass?
 
+### Structured Planning
+Our previous Planner generated:
+```
+[
+    "Retrieve the user's name",
+    "Multiply 25 by 4",
+    "Add 100 to the product"
+]
+```
+That's readable for us, but Python can't directly know:<br>
+which tool to call<br>
+what arguments to provide<br>
+which previous result is required<br>
+
+So we'll make the Planner generate this instead:
+```
+[
+    {
+        "step": 1,
+        "tool": "get_user_name",
+        "arguments": {}
+    },
+    {
+        "step": 2,
+        "tool": "calculator",
+        "arguments": {
+            "a": 25,
+            "b": 4,
+            "operation": "multiply"
+        }
+    },
+    {
+        "step": 3,
+        "tool": "calculator",
+        "arguments": {
+            "a": "<step_2_result>",
+            "b": 100,
+            "operation": "add"
+        }
+    }
+]
+```
+Now our Python program can understand the plan.<br>
+Hence, we need to modify the `Planner prompt`.<br>
+#### Code
+```
+planning_agent_v2.py
+```
+#### Result
+```
+What do you want me to do? get my name, multiply 25 and 4, then add 100
+
+===== GENERATED PLAN =====
+```json
+[
+  {
+    "step": 1,
+    "tool": "get_user_name",
+    "arguments": {}
+  },
+  {
+    "step": 2,
+    "tool": "calculator",
+    "arguments": {
+      "a": 25,
+      "b": 4,
+      "operation": "multiply"
+    }
+  },
+  {
+    "step": 3,
+    "tool": "calculator",
+    "arguments": {
+      "a": "<step_2_result>",
+      "b": 100,
+      "operation": "add"
+    }
+  }
+]
+```
+#### Now something interesting happens
+Our Planner has created:
+```
+Step 1
+get_user_name
+      ↓
+"Sumit"
+
+Step 2
+calculator(25, 4, multiply)
+      ↓
+100
+
+Step 3
+calculator(<step_2_result>, 100, add)
+```
+But `Python` still has to figure out:
+> What does <step_2_result> mean?
+
+This is the job of the Executor.
+
 
 
 
