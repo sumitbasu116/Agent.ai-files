@@ -1418,9 +1418,9 @@ print(f"Prompt: {promt}--> your tokens:{usage.prompt_tokens} completion_tokens:{
 ```
 > input tokens + completion tokens = total tokens
 
-```
-A token is a unit of text, such as a word, part of a word, or punctuation, that an LLM processes as input and generates as output. The tokenizer determines how the text is divided into tokens.
-E.g. Bangalore could be one token as it is very common to LLM and LLM doesn’t have to divide it into smaller units to understand it.
+
+A token is a unit of text, such as a word, part of a word, or punctuation, that an LLM processes as input and generates as output. The `tokenizer` determines how the text is divided into tokens.
+E.g. Bangalore could be one token as it is very `common` to LLM and LLM doesn’t have to divide it into smaller units to understand it.
 
 But, Nagarjuna might be divided into further smaller pieces by the Tokenizer to understand it.
 
@@ -1431,7 +1431,7 @@ Input tokens 	+   completion tokens 	= Total Tokens
 
 Completion tokens are not necessarily generated after the response. 
 In streaming applications, you may receive output tokens incrementally before the complete answer is available.
-```
+
 
 
 
