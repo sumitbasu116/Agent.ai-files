@@ -1413,6 +1413,26 @@ But `Python` still has to figure out:
 This is the job of the Executor.
 
 # From PadhoWithPratyush
+```
+print(f"Prompt: {promt}--> your tokens:{usage.prompt_tokens} completion_tokens:{usage.completion_tokens} total tokens: {usage.total_tokens} Finish Reason: {response.choices[0].finish_reason}")
+```
+> input tokens + completion tokens = total tokens
+
+```
+A token is a unit of text, such as a word, part of a word, or punctuation, that an LLM processes as input and generates as output. The tokenizer determines how the text is divided into tokens.
+E.g. Bangalore could be one token as it is very common to LLM and LLM doesn’t have to divide it into smaller units to understand it.
+
+But, Nagarjuna might be divided into further smaller pieces by the Tokenizer to understand it.
+
+Input tokens = The model processes the prompt and context supplied to it.
+Output/completion tokens = The model generates its response, potentially token by token.
+
+Input tokens 	+   completion tokens 	= Total Tokens
+
+Completion tokens are not necessarily generated after the response. 
+In streaming applications, you may receive output tokens incrementally before the complete answer is available.
+```
+
 
 
 
